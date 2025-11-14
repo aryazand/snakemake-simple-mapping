@@ -52,9 +52,9 @@ rule umi_tools_dedup:
             -I {input.bam} \
             -S {output.bam} \
             --output-stats={wildcards.sample} \
+            --log={log} \
             {params.paired} \
-            {params.extra} \
-            2> {log}
+            {params.extra} 
         
         mv {wildcards.sample}_edit_distance.tsv results/umi_tools/dedup/
         """

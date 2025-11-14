@@ -92,6 +92,6 @@ rule umi_tools_extract:
     threads: 1
     shell:
         """
-        umi_tools extract {params.extra} {params.input_args} 2> {log}
+        umi_tools extract {params.extra} {params.input_args} -L {log}
         mv {wildcards.sample}_*.fastq.gz results/umi_tools/extract/
         """
