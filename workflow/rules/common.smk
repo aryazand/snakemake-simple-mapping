@@ -38,6 +38,10 @@ def get_fastq(wildcards):
         input_dir = Path.absolute(Path.cwd())
         return input_dir / file
 
+# determine processing tool output directory
+def get_processing_dir():
+    return f"results/{config['processing']['tool']}"
+
 
 # get pairs of fastq files for fastp
 def get_fastq_pairs(wildcards):
@@ -85,10 +89,17 @@ def get_multiqc_input(wildcards):
         sample=samples.index,
         tool=config["mapping"]["tool"],
     )
-    result += expand(
-        "results/fastp/{sample}.json",
-        sample=samples.index,
-    )
+    if config["processing"]["tool"] == "fastp":
+        result += expand(
+            "results/fastp/{sample}.json",
+            sample=samples.index,
+        )
+    elif config["processing"]["tool"] == "trim_galore":
+        result += expand(
+            "results/trim_galore/{sample}_{read}.fastq.gz_trimming_report.txt",
+            sample=samples.index,
+            read=["read1", "read2"] if is_paired_end() else ["read1"],
+        )
     result += expand(
         "results/rseqc/{tool}/{sample}.txt",
         sample=samples.index,
