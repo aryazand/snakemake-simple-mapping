@@ -51,7 +51,7 @@ def get_fastq_pairs(wildcards):
 def get_processed_fastq(wildcards):
     if config["processing"]["umi_tools"]["enabled"]:
         return expand(
-            "results/umi_tools/{sample}_{read}.fastq.gz",
+            "results/umi_tools/extract/{sample}_{read}.fastq.gz",
             sample=wildcards.sample,
             read=["read1", "read2"] if is_paired_end() else ["read1"],
         )

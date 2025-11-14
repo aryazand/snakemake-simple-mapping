@@ -72,11 +72,11 @@ rule umi_tools_extract:
         ),
     output:
         fastq=expand(
-            "results/umi_tools/{{sample}}_{read}.fastq.gz",
+            "results/umi_tools/extract/{{sample}}_{read}.fastq.gz",
             read=["read1", "read2"] if is_paired_end() else ["read1"],
         ),
     log:
-        "results/umi_tools/{sample}.log",
+        "results/umi_tools/extract/{sample}.log",
     message:
         "extracting UMIs using umi_tools"
     params:
@@ -93,5 +93,5 @@ rule umi_tools_extract:
     shell:
         """
         umi_tools extract {params.extra} {params.input_args} 2> {log}
-        mv {wildcards.sample}_*.fastq.gz results/umi_tools/
+        mv {wildcards.sample}_*.fastq.gz results/umi_tools/extract/
         """
