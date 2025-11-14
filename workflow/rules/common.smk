@@ -47,6 +47,20 @@ def get_fastq_pairs(wildcards):
         read=["read1", "read2"] if is_paired_end() else ["read1"],
     )
 
+# get processed fastq files (after fastp or umi_tools)
+def get_processed_fastq(wildcards):
+    if config["processing"]["umi_tools"]["enabled"]:
+        return expand(
+            "results/umi_tools/{sample}_{read}.fastq.gz",
+            sample=wildcards.sample,
+            read=["read1", "read2"] if is_paired_end() else ["read1"],
+        )
+    else:
+        return expand(
+            "results/fastp/{sample}_{read}.fastq.gz",
+            sample=wildcards.sample,
+            read=["read1", "read2"] if is_paired_end() else ["read1"],
+        )
 
 # get bam files
 def get_bam(wildcards):
@@ -56,6 +70,19 @@ def get_bam(wildcards):
         tool=config["mapping"]["tool"],
     )
 
+def get_bam_2(wildcards):
+    if (config["processing"]["umi_tools"]["enabled"] and 
+        config["processing"]["umi_tools"]["dedup_enabled"]):
+        return f"results/umi_tools/dedup/{wildcards.sample}.bam"
+    else:
+        return f"results/samtools/sort/{wildcards.sample}.bam"
+
+def get_bai(wildcards):
+    if (config["processing"]["umi_tools"]["enabled"] and 
+        config["processing"]["umi_tools"]["dedup_enabled"]):
+        return f"results/umi_tools/dedup/{wildcards.sample}.bai"
+    else:
+        return f"results/samtools/sort/{wildcards.sample}.bai"
 
 # get variant files to make consensus
 def get_variants(wildcards):

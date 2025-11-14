@@ -29,6 +29,50 @@ rule samtools_index:
     wrapper:
         "v7.0.0/bio/samtools/index"
 
+rule umi_tools_dedup:
+    input:
+        bam="results/samtools/sort/{sample}.bam",
+        bai="results/samtools/sort/{sample}.bai",
+    output:
+        bam="results/umi_tools/dedup/{sample}.bam",
+        stats="results/umi_tools/dedup/{sample}_edit_distance.tsv",
+    log:
+        "results/umi_tools/dedup/{sample}.log",
+    message:
+        "deduplicate reads using umi_tools"
+    params:
+        extra=config["processing"]["umi_tools"]["dedup_extra"],
+        paired="--paired" if is_paired_end() else "",
+    conda:
+        "../envs/umi_tools.yml"
+    threads: 1
+    shell:
+        """
+        umi_tools dedup \
+            -I {input.bam} \
+            -S {output.bam} \
+            --output-stats={wildcards.sample} \
+            {params.paired} \
+            {params.extra} \
+            2> {log}
+        
+        mv {wildcards.sample}_edit_distance.tsv results/umi_tools/dedup/
+        """
+
+rule samtools_index_dedup:
+    input:
+        "results/umi_tools/dedup/{sample}.bam",
+    output:
+        "results/umi_tools/dedup/{sample}.bai",
+    log:
+        "results/umi_tools/dedup/{sample}_index.log",
+    message:
+        "index deduplicated reads"
+    params:
+        extra=config["mapping"]["samtools_index"]["extra"],
+    threads: 2
+    wrapper:
+        "v7.0.0/bio/samtools/index"
 
 rule gffread_gff:
     input:
@@ -49,7 +93,7 @@ rule gffread_gff:
 
 rule rseqc_infer_experiment:
     input:
-        aln="results/samtools/sort/{sample}.bam",
+        aln=get_bam_2,
         refgene="results/get_genome/genome.bed",
     output:
         "results/rseqc/infer_experiment/{sample}.txt",
@@ -65,7 +109,7 @@ rule rseqc_infer_experiment:
 
 rule rseqc_bam_stat:
     input:
-        "results/samtools/sort/{sample}.bam",
+        get_bam_2,
     output:
         "results/rseqc/bam_stat/{sample}.txt",
     threads: 2
@@ -81,8 +125,8 @@ rule rseqc_bam_stat:
 
 rule deeptools_coverage:
     input:
-        bam="results/samtools/sort/{sample}.bam",
-        bai="results/samtools/sort/{sample}.bai",
+        bam=get_bam_2,
+        bai=get_bai,
     output:
         "results/deeptools/coverage/{sample}.bw",
     threads: 4

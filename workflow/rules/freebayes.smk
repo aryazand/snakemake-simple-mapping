@@ -1,7 +1,7 @@
 rule freebayes:
     input:
-        alns="results/samtools/sort/{sample}.bam",
-        idxs="results/samtools/sort/{sample}.bai",
+        alns=get_bam_2,
+        idxs=get_bai,
         ref=rules.get_genome.output.fasta,
         refidx=rules.get_genome.output.fai,
     output:

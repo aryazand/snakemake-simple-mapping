@@ -63,3 +63,35 @@ rule fastp:
         mem_mb=4096,
     wrapper:
         "v7.0.0/bio/fastp"
+
+rule umi_tools_extract:
+    input:
+        fastq=expand(
+            "results/fastp/{{sample}}_{read}.fastq.gz",
+            read=["read1", "read2"] if is_paired_end() else ["read1"],
+        ),
+    output:
+        fastq=expand(
+            "results/umi_tools/{{sample}}_{read}.fastq.gz",
+            read=["read1", "read2"] if is_paired_end() else ["read1"],
+        ),
+    log:
+        "results/umi_tools/{sample}.log",
+    message:
+        "extracting UMIs using umi_tools"
+    params:
+        extra=config["processing"]["umi_tools"]["extract_extra"],
+        input_args=lambda wildcards, input: (
+            f"-I {input.fastq[0]} -S {wildcards.sample}_read1.fastq.gz "
+            f"--read2-in={input.fastq[1]} --read2-out={wildcards.sample}_read2.fastq.gz"
+            if is_paired_end()
+            else f"-I {input.fastq[0]} -S {wildcards.sample}_read1.fastq.gz"
+        ),
+    conda:
+        "../envs/umi_tools.yml"
+    threads: 1
+    shell:
+        """
+        umi_tools extract {params.extra} {params.input_args} 2> {log}
+        mv {wildcards.sample}_*.fastq.gz results/umi_tools/
+        """
