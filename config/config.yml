@@ -14,14 +14,18 @@ get_genome:
     ]
 
 processing:
+  tool: "fastp"
   fastp:
     extra: ""
+  trim_galore:
+    extra: "--gzip --paired"
   umi_tools:
       enabled: false  # Set to true to enable UMI extraction
       extract_extra: "--bc-pattern=NNNNNNNN"
       dedup_enabled: false  # Set to true to enable deduplication
       dedup_extra: "--method=unique"  # or directional, cluster, adjacency, etc.
-      
+
+
 mapping:
   tool: "bwa_mem2"
   bowtie2:

@@ -14,14 +14,17 @@ get_genome:
     ]
 
 processing:
+  tool: "trim_galore"
   fastp:
     extra: ""
+  trim_galore:
+    extra: "--gzip --paired"
 
 mapping:
-  tool: "bwa_mem2"
+  tool: "bowtie2"
   bowtie2:
-    index: ""
-    extra: ""
+    index: "--threads 8"
+    extra: "--threads 8"
   bwa_mem2:
     extra: ""
     sort: "samtools"
