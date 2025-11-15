@@ -61,9 +61,9 @@ def get_processed_fastq(wildcards):
         )
     else:
         return expand(
-            "results/fastp/{sample}_{read}.fastq.gz",
-            sample=wildcards.sample,
+            "results/{tool}/{{sample}}_{read}.fastq.gz",
             read=["read1", "read2"] if is_paired_end() else ["read1"],
+            tool=config["processing"]["tool"],
         )
 
 # get bam files
