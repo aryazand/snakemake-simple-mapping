@@ -21,9 +21,9 @@ processing:
     extra: "--gzip --paired"
   umi_tools:
       enabled: false  # Set to true to enable UMI extraction
-      extract_extra: "--bc-pattern=NNNNNNNN"
+      extract_extra: "--bc-pattern=NNNNNNNN --bc-pattern2=NNNNNNNN" 
       dedup_enabled: false  # Set to true to enable deduplication
-      dedup_extra: "--method=unique"  # or directional, cluster, adjacency, etc.
+      dedup_extra: "--paired"  # or directional, cluster, adjacency, etc.
 
 
 mapping:
