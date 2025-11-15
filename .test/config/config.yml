@@ -19,6 +19,11 @@ processing:
     extra: ""
   trim_galore:
     extra: "--gzip --paired"
+  umi_tools:
+      enabled: false  # Set to true to enable UMI extraction
+      extract_extra: "--bc-pattern=NNNNNNNN --bc-pattern2=NNNNNNNN" 
+      dedup_enabled: false  # Set to true to enable deduplication
+      dedup_extra: "--paired"  # or directional, cluster, adjacency, etc.
 
 mapping:
   tool: "bowtie2"
