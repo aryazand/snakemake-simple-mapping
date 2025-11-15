@@ -27,7 +27,7 @@ processing:
 
 
 mapping:
-  tool: "bwa_mem2"
+  tool: "bowtie2"
   bowtie2:
     index: ""
     extra: ""
