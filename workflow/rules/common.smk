@@ -152,4 +152,10 @@ def get_multiqc_input(wildcards):
             else ["_snpeff.vcf", "_snpeff.csv"]
         ),
     )
+    result += expand(
+        "results/{caller}/{sample}{ext}",
+        sample=samples.index,
+        caller=config["chip_peak_calling"]["tool"],
+        ext=["_peaks.narrowPeak", "_summits.bed", "_peaks.xls"]
+    )
     return result

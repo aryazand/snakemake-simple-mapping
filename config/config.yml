@@ -94,3 +94,8 @@ qc:
 
 report:
   minimum_variant_count: 2
+
+chip_peak_calling:
+  tool: "macs2"
+  macs2:
+    extra: "-f BAM -g hs --nomodel"

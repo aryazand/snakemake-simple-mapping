@@ -17,7 +17,7 @@ include: "rules/freebayes.smk"
 include: "rules/variant_annotation.smk"
 include: "rules/qc.smk"
 include: "rules/report.smk"
-
+include: "rules/macs2.smk"
 
 # optional messages, log and error handling
 # -----------------------------------------------------
