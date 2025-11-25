@@ -125,21 +125,37 @@ rule rseqc_bam_stat:
         "v7.0.0/bio/rseqc/bam_stat"
 
 
-rule deeptools_coverage:
+rule deeptools_coverage_forward:
     input:
         bam=get_bam_2,
         bai=get_bai,
     output:
-        "results/deeptools/coverage/{sample}.bw",
+        "results/deeptools/coverage/{sample}_forward.bw",
     threads: 4
     params:
-        effective_genome_size=config["mapping_stats"]["deeptools_coverage"][
-            "genome_size"
-        ],
-        extra=config["mapping_stats"]["deeptools_coverage"]["extra"],
+        effective_genome_size=config["mapping_stats"]["deeptools_coverage"]["genome_size"],
+        extra=config["mapping_stats"]["deeptools_coverage"]["extra"] + " --filterRNAstrand forward",
     log:
-        "results/deeptools/coverage/{sample}.log",
+        "results/deeptools/coverage/{sample}_forward.log",
     message:
-        "generate normalized coverage files using deeptools"
+        "generate normalized forward coverage using deeptools",
+    wrapper:
+        "v7.0.0/bio/deeptools/bamCoverage"
+
+
+rule deeptools_coverage_reverse:
+    input:
+        bam=get_bam_2,
+        bai=get_bai,
+    output:
+        "results/deeptools/coverage/{sample}_reverse.bw",
+    threads: 4
+    params:
+        effective_genome_size=config["mapping_stats"]["deeptools_coverage"]["genome_size"],
+        extra=config["mapping_stats"]["deeptools_coverage"]["extra"] + " --filterRNAstrand reverse",
+    log:
+        "results/deeptools/coverage/{sample}_reverse.log",
+    message:
+        "generate normalized reverse coverage using deeptools",
     wrapper:
         "v7.0.0/bio/deeptools/bamcoverage"
