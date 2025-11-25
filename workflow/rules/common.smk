@@ -101,7 +101,6 @@ def get_variants(wildcards):
         ),
     )
 
-
 # get input for multiqc
 def get_multiqc_input(wildcards):
     result = []
@@ -153,3 +152,16 @@ def get_multiqc_input(wildcards):
         ),
     )
     return result
+
+def get_ignore_chroms(chrom_file, region_to_keep):
+    """Generate --ignoreForNormalization parameters for all chromosomes except region_to_keep"""
+    ignore_chroms = []
+    with open(chrom_file) as f:
+        for line in f:
+            chrom = line.strip()
+            if chrom and chrom != region_to_keep:
+                ignore_chroms.append(chrom)
+    
+    # Format for deeptools: repeating --ignoreForNormalization for each chromosome
+    ignore_params = " ".join([f"--ignoreForNormalization {chrom}" for chrom in ignore_chroms])
+    return ignore_params
