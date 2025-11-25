@@ -140,7 +140,7 @@ rule deeptools_coverage_forward:
     message:
         "generate normalized forward coverage using deeptools",
     wrapper:
-        "v7.0.0/bio/deeptools/bamCoverage"
+        "v7.0.0/bio/deeptools/bamcoverage"
 
 
 rule deeptools_coverage_reverse:
