@@ -16,13 +16,13 @@ get_genome:
 processing:
   tool: "fastp"
   fastp:
-    extra: ""
+    extra: "--detect_adapter_for_pe"
   trim_galore:
     extra: "--gzip --paired"
   umi_tools:
-      enabled: false  # Set to true to enable UMI extraction
+      enabled: true  # Set to true to enable UMI extraction
       extract_extra: "--bc-pattern=NNNNNNNN --bc-pattern2=NNNNNNNN" 
-      dedup_enabled: false  # Set to true to enable deduplication
+      dedup_enabled: true  # Set to true to enable deduplication
       dedup_extra: "--paired"  # or directional, cluster, adjacency, etc.
 
 
@@ -30,7 +30,7 @@ mapping:
   tool: "bowtie2"
   bowtie2:
     index: ""
-    extra: ""
+    extra: "--threads 10 --sensitive --end-to-end --maxins 500"
   bwa_mem2:
     extra: ""
     sort: "samtools"
@@ -57,7 +57,7 @@ mapping_stats:
   rseqc_bam_stat:
     extra: ""
   deeptools_coverage:
-    genome_size: 1000
+    genome_size: 2913255426
     extra: ""
 
 variant_calling:
