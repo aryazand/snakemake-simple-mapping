@@ -83,8 +83,9 @@ rule trim_galore:
 rule umi_tools_extract:
     input:
         fastq=expand(
-            "results/fastp/{{sample}}_{read}.fastq.gz",
+            "results/{folder}/{{sample}}_{read}.fastq.gz",
             read=["read1", "read2"] if is_paired_end() else ["read1"],
+            folder = config["processing"]["tool"]
         ),
     output:
         fastq=expand(
