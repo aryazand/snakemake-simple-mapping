@@ -51,7 +51,6 @@ rule umi_tools_dedup:
         umi_tools dedup \
             -I {input.bam} \
             -S {output.bam} \
-            --output-stats={wildcards.sample} \
             --log={log} \
             {params.paired} \
             {params.extra} 
