@@ -54,10 +54,6 @@ rule umi_tools_dedup:
             --log={log} \
             {params.paired} \
             {params.extra} 
-        
-        mv {wildcards.sample}_edit_distance.tsv results/umi_tools/dedup/
-        mv {wildcards.sample}_per_umi_per_position.tsv results/umi_tools/dedup/
-        mv {wildcards.sample}_per_umi.tsv results/umi_tools/dedup/
         """
 
 rule samtools_index_dedup:
