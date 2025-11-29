@@ -35,7 +35,6 @@ rule umi_tools_dedup:
         bai="results/samtools/sort/{sample}.bai",
     output:
         bam="results/umi_tools/dedup/{sample}.bam",
-        stats="results/umi_tools/dedup/{sample}_edit_distance.tsv",
     log:
         "results/umi_tools/dedup/{sample}.log",
     message:
