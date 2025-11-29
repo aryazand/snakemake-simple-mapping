@@ -58,6 +58,7 @@ mapping_stats:
     extra: ""
   deeptools_coverage:
     genome_size: 2913255426
+    fiveprime: false
     extra: ""
 
 variant_calling:
