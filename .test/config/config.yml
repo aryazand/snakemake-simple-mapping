@@ -14,9 +14,9 @@ get_genome:
     ]
 
 processing:
-  tool: "trim_galore"
+  tool: "fastp"
   fastp:
-    extra: ""
+    extra: "--detect_adapter_for_pe"
   trim_galore:
     extra: "--gzip --paired"
   umi_tools:
@@ -94,3 +94,8 @@ qc:
 
 report:
   minimum_variant_count: 2
+
+chip_peak_calling:
+  tool: "macs2"
+  macs2:
+    extra: "-f BAM --nomodel"
