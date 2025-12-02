@@ -152,10 +152,13 @@ def get_multiqc_input(wildcards):
             else ["_snpeff.vcf", "_snpeff.csv"]
         ),
     )
-    result += expand(
-        "results/{caller}/{sample}{ext}",
-        sample=samples.index,
-        caller=config["chip_peak_calling"]["tool"],
-        ext=["_peaks.narrowPeak", "_summits.bed", "_peaks.xls"]
-    )
+    if config["chip_peak_calling"]["tool"] == "macs2":
+        result += expand(
+            "results/{caller}/{sample}{ext}",
+            sample=samples.index,
+            caller=config["chip_peak_calling"]["tool"],
+            ext=["_peaks.narrowPeak", "_summits.bed", "_peaks.xls"]
+        )
+    elif config["chip_peak_calling"]["tool"] != "macs2":
+        pass  # add other tools here as needed
     return result
