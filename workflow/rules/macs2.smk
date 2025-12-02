@@ -10,7 +10,7 @@ rule macs2_callpeaks:
     message:
         "call peaks with MACS2",
     params:
-        extra=config["chip_peak_calling"]["macs2"]["extra"]
+        extra=config["peak_calling"]["macs2"]["extra"]
     threads: 2
     wrapper:
         "v2.9.1/bio/macs2/callpeak"
