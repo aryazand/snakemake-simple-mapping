@@ -118,6 +118,22 @@ rule rseqc_bam_stat:
     wrapper:
         "v7.0.0/bio/rseqc/bam_stat"
 
+rule deeptools_coverage:
+    input:
+        bam=get_bam_2,
+        bai=get_bai,
+    output:
+        "results/deeptools/coverage/{sample}.bw",
+    threads: 4
+    params:
+        effective_genome_size=config["mapping_stats"]["deeptools_coverage"]["genome_size"],
+        extra=config["mapping_stats"]["deeptools_coverage"]["extra"],
+    log:
+        "results/deeptools/coverage/{sample}.log",
+    message:
+        "generate normalized coverage using deeptools",
+    wrapper:
+        "v7.0.0/bio/deeptools/bamcoverage"
 
 rule deeptools_coverage_forward:
     input:

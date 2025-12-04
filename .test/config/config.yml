@@ -57,7 +57,8 @@ mapping_stats:
     extra: ""
   deeptools_coverage:
     genome_size: 1000
-    fiveprime: true
+    fiveprime: false
+    strand_specific: false
     extra: "--binSize 1 --normalizeUsing CPM"
 
 variant_calling:

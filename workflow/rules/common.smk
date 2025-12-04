@@ -142,6 +142,17 @@ def get_multiqc_input(wildcards):
             sample=samples.index, 
             strand=["forward", "reverse"],
         )
+    if (config["mapping_stats"]["deeptools_coverage"]["strand_specific"]):
+        result += expand(
+            "results/deeptools/coverage/{sample}_{strand}.bw",
+            sample=samples.index, 
+            strand=["forward", "reverse"],
+        )
+    else:
+        result += expand(
+            "results/deeptools/coverage/{sample}.bw",
+            sample=samples.index,
+        )
     result += expand(
         "results/{caller}/call/{sample}{ext}",
         sample=samples.index,
