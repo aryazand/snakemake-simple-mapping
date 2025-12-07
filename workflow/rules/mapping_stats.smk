@@ -179,7 +179,7 @@ rule deeptools_5prime_coverage_forward:
     threads: 4
     params:
         effective_genome_size=config["mapping_stats"]["deeptools_coverage"]["genome_size"],
-        extra=config["mapping_stats"]["deeptools_coverage"]["extra"] + "--offset 1 --filterRNAstrand forward",
+        extra=config["mapping_stats"]["deeptools_coverage"]["extra"] + "--Offset 1 --filterRNAstrand forward",
     log:
         "results/deeptools/5prime_coverage/{sample}_forward.log",
     message:
@@ -197,7 +197,7 @@ rule deeptools_5prime_coverage_reverse:
     threads: 4
     params:
         effective_genome_size=config["mapping_stats"]["deeptools_coverage"]["genome_size"],
-        extra=config["mapping_stats"]["deeptools_coverage"]["extra"] + "--offset 1 --filterRNAstrand reverse",
+        extra=config["mapping_stats"]["deeptools_coverage"]["extra"] + "--Offset 1 --filterRNAstrand reverse",
     log:
         "results/deeptools/5prime_coverage/{sample}_reverse.log",
     message:
