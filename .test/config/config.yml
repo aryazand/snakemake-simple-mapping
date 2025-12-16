@@ -14,16 +14,11 @@ get_genome:
     ]
 
 processing:
-  tool: "fastp"
+  tool: "trim_galore"
   fastp:
-    extra: "--detect_adapter_for_pe"
+    extra: ""
   trim_galore:
     extra: "--gzip --paired"
-  umi_tools:
-      enabled: false  # Set to true to enable UMI extraction
-      extract_extra: "--bc-pattern=NNNNNNNN --bc-pattern2=NNNNNNNN" 
-      dedup_enabled: false  # Set to true to enable deduplication
-      dedup_extra: "--paired"  # or directional, cluster, adjacency, etc.
 
 mapping:
   tool: "bowtie2"
@@ -57,9 +52,7 @@ mapping_stats:
     extra: ""
   deeptools_coverage:
     genome_size: 1000
-    fiveprime: false
-    strand_specific: false
-    extra: "--binSize 1 --normalizeUsing CPM"
+    extra: ""
 
 variant_calling:
   tool: "freebayes"
@@ -95,8 +88,3 @@ qc:
 
 report:
   minimum_variant_count: 2
-
-peak_calling:
-  tool: "macs2"
-  macs2:
-    extra: "-f BAM --nomodel"

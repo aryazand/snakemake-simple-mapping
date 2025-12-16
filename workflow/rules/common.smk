@@ -51,20 +51,6 @@ def get_fastq_pairs(wildcards):
         read=["read1", "read2"] if is_paired_end() else ["read1"],
     )
 
-# get processed fastq files (after fastp or umi_tools)
-def get_processed_fastq(wildcards):
-    if config["processing"]["umi_tools"]["enabled"]:
-        return expand(
-            "results/umi_tools/extract/{sample}_{read}.fastq.gz",
-            sample=wildcards.sample,
-            read=["read1", "read2"] if is_paired_end() else ["read1"],
-        )
-    else:
-        return expand(
-            "results/{tool}/{{sample}}_{read}.fastq.gz",
-            read=["read1", "read2"] if is_paired_end() else ["read1"],
-            tool=config["processing"]["tool"],
-        )
 
 # get bam files
 def get_bam(wildcards):
@@ -87,6 +73,7 @@ def get_variants(wildcards):
             else "_snpeff.vcf"
         ),
     )
+
 
 # get input for multiqc
 def get_multiqc_input(wildcards):
@@ -119,27 +106,9 @@ def get_multiqc_input(wildcards):
         tool=["infer_experiment", "bam_stat"],
     )
     result += expand(
-        "results/deeptools/coverage/{sample}_{strand}.bw",
-        sample=samples.index, 
-        strand=["forward", "reverse"],
+        "results/deeptools/coverage/{sample}.bw",
+        sample=samples.index,
     )
-    if (config["mapping_stats"]["deeptools_coverage"]["fiveprime"]):
-        result += expand(
-            "results/deeptools/5prime_coverage/{sample}_{strand}.bw",
-            sample=samples.index, 
-            strand=["forward", "reverse"],
-        )
-    if (config["mapping_stats"]["deeptools_coverage"]["strand_specific"]):
-        result += expand(
-            "results/deeptools/coverage/{sample}_{strand}.bw",
-            sample=samples.index, 
-            strand=["forward", "reverse"],
-        )
-    else:
-        result += expand(
-            "results/deeptools/coverage/{sample}.bw",
-            sample=samples.index,
-        )
     result += expand(
         "results/{caller}/call/{sample}{ext}",
         sample=samples.index,
@@ -156,26 +125,4 @@ def get_multiqc_input(wildcards):
             else ["_snpeff.vcf", "_snpeff.csv"]
         ),
     )
-    if config["peak_calling"]["tool"] == "macs2":
-        result += expand(
-            "results/{caller}/{sample}{ext}",
-            sample=samples.index,
-            caller=config["peak_calling"]["tool"],
-            ext=["_peaks.narrowPeak", "_summits.bed", "_peaks.xls"]
-        )
-    else:
-        pass  # add other tools here as needed
     return result
-
-def get_ignore_chroms(chrom_file, region_to_keep):
-    """Generate --ignoreForNormalization parameters for all chromosomes except region_to_keep"""
-    ignore_chroms = []
-    with open(chrom_file) as f:
-        for line in f:
-            chrom = line.strip()
-            if chrom and chrom != region_to_keep:
-                ignore_chroms.append(chrom)
-    
-    # Format for deeptools: repeating --ignoreForNormalization for each chromosome
-    ignore_params = " ".join([f"--ignoreForNormalization {chrom}" for chrom in ignore_chroms])
-    return ignore_params
