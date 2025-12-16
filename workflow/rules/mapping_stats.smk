@@ -29,6 +29,46 @@ rule samtools_index:
     wrapper:
         "v7.0.0/bio/samtools/index"
 
+rule umi_tools_dedup:
+    input:
+        bam="results/samtools/sort/{sample}.bam",
+        bai="results/samtools/sort/{sample}.bai",
+    output:
+        bam="results/umi_tools/dedup/{sample}.bam",
+    log:
+        "results/umi_tools/dedup/{sample}.log",
+    message:
+        "deduplicate reads using umi_tools"
+    params:
+        extra=config["processing"]["umi_tools"]["dedup_extra"],
+        paired="--paired" if is_paired_end() else "",
+    conda:
+        "../envs/umi_tools.yml"
+    threads: 1
+    shell:
+        """
+        umi_tools dedup \
+            -I {input.bam} \
+            -S {output.bam} \
+            --log={log} \
+            {params.paired} \
+            {params.extra} 
+        """
+
+rule samtools_index_dedup:
+    input:
+        "results/umi_tools/dedup/{sample}.bam",
+    output:
+        "results/umi_tools/dedup/{sample}.bai",
+    log:
+        "results/umi_tools/dedup/{sample}_index.log",
+    message:
+        "index deduplicated reads"
+    params:
+        extra=config["mapping"]["samtools_index"]["extra"],
+    threads: 2
+    wrapper:
+        "v7.0.0/bio/samtools/index"
 
 rule gffread_gff:
     input:
@@ -78,7 +118,6 @@ rule rseqc_bam_stat:
     wrapper:
         "v7.0.0/bio/rseqc/bam_stat"
 
-
 rule deeptools_coverage:
     input:
         bam="results/samtools/sort/{sample}.bam",
@@ -87,13 +126,81 @@ rule deeptools_coverage:
         "results/deeptools/coverage/{sample}.bw",
     threads: 4
     params:
-        effective_genome_size=config["mapping_stats"]["deeptools_coverage"][
-            "genome_size"
-        ],
+        effective_genome_size=config["mapping_stats"]["deeptools_coverage"]["genome_size"],
         extra=config["mapping_stats"]["deeptools_coverage"]["extra"],
     log:
         "results/deeptools/coverage/{sample}.log",
     message:
-        "generate normalized coverage files using deeptools"
+        "generate normalized coverage using deeptools",
+    wrapper:
+        "v7.0.0/bio/deeptools/bamcoverage"
+
+rule deeptools_coverage_forward:
+    input:
+        bam=get_bam_2,
+        bai=get_bai,
+    output:
+        "results/deeptools/coverage/{sample}_forward.bw",
+    threads: 4
+    params:
+        effective_genome_size=config["mapping_stats"]["deeptools_coverage"]["genome_size"],
+        extra=config["mapping_stats"]["deeptools_coverage"]["extra"] + " --filterRNAstrand forward",
+    log:
+        "results/deeptools/coverage/{sample}_forward.log",
+    message:
+        "generate normalized forward coverage using deeptools",
+    wrapper:
+        "v7.0.0/bio/deeptools/bamcoverage"
+
+
+rule deeptools_coverage_reverse:
+    input:
+        bam=get_bam_2,
+        bai=get_bai,
+    output:
+        "results/deeptools/coverage/{sample}_reverse.bw",
+    threads: 4
+    params:
+        effective_genome_size=config["mapping_stats"]["deeptools_coverage"]["genome_size"],
+        extra=config["mapping_stats"]["deeptools_coverage"]["extra"] + " --filterRNAstrand reverse",
+    log:
+        "results/deeptools/coverage/{sample}_reverse.log",
+    message:
+        "generate normalized reverse coverage using deeptools",
+    wrapper:
+        "v7.0.0/bio/deeptools/bamcoverage"
+
+rule deeptools_5prime_coverage_forward:
+    input:
+        bam=get_bam_2,
+        bai=get_bai,
+    output:
+        "results/deeptools/5prime_coverage/{sample}_forward.bw",
+    threads: 4
+    params:
+        effective_genome_size=config["mapping_stats"]["deeptools_coverage"]["genome_size"],
+        extra=config["mapping_stats"]["deeptools_coverage"]["extra"] + " --Offset 1 --filterRNAstrand forward",
+    log:
+        "results/deeptools/5prime_coverage/{sample}_forward.log",
+    message:
+        "generate normalized forward 5prime coverage using deeptools",
+    wrapper:
+        "v7.0.0/bio/deeptools/bamcoverage"
+
+
+rule deeptools_5prime_coverage_reverse:
+    input:
+        bam=get_bam_2,
+        bai=get_bai,
+    output:
+        "results/deeptools/5prime_coverage/{sample}_reverse.bw",
+    threads: 4
+    params:
+        effective_genome_size=config["mapping_stats"]["deeptools_coverage"]["genome_size"],
+        extra=config["mapping_stats"]["deeptools_coverage"]["extra"] + " --Offset 1 --filterRNAstrand reverse",
+    log:
+        "results/deeptools/5prime_coverage/{sample}_reverse.log",
+    message:
+        "generate normalized reverse 5prime coverage using deeptools",
     wrapper:
         "v7.0.0/bio/deeptools/bamcoverage"
